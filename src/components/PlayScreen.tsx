@@ -1,0 +1,127 @@
+import { useState } from 'react'
+import type { Challenge, WinStats } from '../types'
+import VimEditor from '../editor/VimEditor'
+import HintPanel from './HintPanel'
+import ResultModal from './ResultModal'
+
+interface Result {
+  stats: WinStats
+  stars: number
+  xpGained: number
+}
+
+interface Props {
+  challenge: Challenge
+  hasNext: boolean
+  hintsOn: boolean
+  onToggleHints: () => void
+  onBack: () => void
+  onNext: () => void
+  onCleared: (challenge: Challenge, stats: WinStats) => { stars: number; xpGained: number }
+}
+
+const MODE_STYLE: Record<string, string> = {
+  normal: 'bg-emerald-900/60 text-emerald-300 border-emerald-700',
+  insert: 'bg-sky-900/60 text-sky-300 border-sky-700',
+  visual: 'bg-purple-900/60 text-purple-300 border-purple-700',
+}
+
+export default function PlayScreen({
+  challenge,
+  hasNext,
+  hintsOn,
+  onToggleHints,
+  onBack,
+  onNext,
+  onCleared,
+}: Props) {
+  const [keys, setKeys] = useState<string[]>([])
+  const [mode, setMode] = useState('normal')
+  const [attempt, setAttempt] = useState(0)
+  const [result, setResult] = useState<Result | null>(null)
+
+  const reset = () => {
+    setKeys([])
+    setMode('normal')
+    setResult(null)
+    setAttempt((a) => a + 1)
+  }
+
+  const handleWin = (stats: WinStats) => {
+    const { stars, xpGained } = onCleared(challenge, stats)
+    setResult({ stats, stars, xpGained })
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <button onClick={onBack} className="text-sm text-zinc-400 hover:text-zinc-100">
+          ← Levels
+        </button>
+        <h2 className="text-base font-bold">
+          {challenge.type === 'world' ? '🌍' : '⛳'} {challenge.title}
+        </h2>
+        <span className="text-xs text-zinc-500">stage {challenge.stage}</span>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={onToggleHints}
+            className={`text-xs px-2.5 py-1 rounded-full border ${
+              hintsOn ? 'border-amber-500 text-amber-300' : 'border-zinc-700 text-zinc-500'
+            }`}
+          >
+            💡 hints {hintsOn ? 'on' : 'off'}
+          </button>
+          <button
+            onClick={reset}
+            className="text-xs px-2.5 py-1 rounded-full border border-zinc-700 text-zinc-400 hover:text-zinc-100"
+          >
+            ↺ reset
+          </button>
+        </div>
+      </div>
+
+      <p className="rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-zinc-200">
+        {challenge.mission}
+      </p>
+
+      <div className="flex items-center gap-4 text-xs font-mono">
+        <span className={`px-2 py-0.5 rounded border uppercase ${MODE_STYLE[mode] ?? MODE_STYLE.normal}`}>
+          {mode}
+        </span>
+        <span className="text-zinc-400">
+          keys <span className={keys.length > challenge.par ? 'text-rose-400' : 'text-zinc-100'}>{keys.length}</span>
+          <span className="text-zinc-600"> / par {challenge.par}</span>
+        </span>
+      </div>
+
+      <div className="flex gap-4 items-start">
+        <div className="flex-1 min-w-0 rounded-lg overflow-hidden border border-zinc-800">
+          <VimEditor
+            challenge={challenge}
+            attempt={attempt}
+            onKey={(t) => setKeys((k) => [...k, t])}
+            onWin={handleWin}
+            onMode={setMode}
+          />
+        </div>
+        {hintsOn && <HintPanel challenge={challenge} />}
+      </div>
+
+      <div className="min-h-8 rounded-lg bg-zinc-900/60 border border-zinc-800 px-3 py-1.5 font-mono text-sm text-zinc-300 break-all">
+        {keys.length > 0 ? keys.join(' ') : <span className="text-zinc-600">your keystrokes appear here…</span>}
+      </div>
+
+      {result && (
+        <ResultModal
+          challenge={challenge}
+          stats={result.stats}
+          stars={result.stars}
+          xpGained={result.xpGained}
+          hasNext={hasNext}
+          onRetry={reset}
+          onNext={onNext}
+        />
+      )}
+    </div>
+  )
+}

@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #09090b;
+  color: #f4f4f5;
+}
+
+/* ---------- editor ---------- */
+
+.cm-editor {
+  font-size: 16px;
+  border-radius: 0.5rem;
+}
+
+.cm-editor.cm-focused {
+  outline: none;
+}
+
+.cm-content {
+  font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  padding: 12px 0;
+}
+
+/* ---------- world levels ---------- */
+
+.world .cm-editor {
+  font-size: 24px;
+}
+
+.world .cm-gutters {
+  display: none;
+}
+
+.world .cm-content {
+  line-height: 1.7;
+}
+
+.tile {
+  position: relative;
+  color: transparent !important;
+}
+
+.tile::after {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85em;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.tile-tree::after { content: "🌲"; }
+.tile-rock::after { content: "🪨"; }
+.tile-gem::after { content: "💎"; }
+.tile-altar::after { content: "⛩️"; }
+.tile-flag::after { content: "🚩"; }
+.tile-camp::after { content: "⛺"; }
+
+.tile-goal {
+  background: rgba(250, 204, 21, 0.22);
+  border-radius: 3px;
+  animation: goalPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes goalPulse {
+  50% { background: rgba(250, 204, 21, 0.45); }
+}
