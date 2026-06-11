@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react'
 import { CHALLENGES } from '../data/challenges'
 import { STAGES } from '../data/curriculum'
 import type { SaveData } from '../engine/storage'
@@ -9,6 +10,31 @@ interface Props {
 }
 
 export default function LevelSelect({ save, onPlay }: Props) {
+  const flat = useMemo(() => STAGES.flatMap((s) => CHALLENGES.filter((c) => c.stage === s.id)), [])
+  const [sel, setSel] = useState(0)
+
+  useEffect(() => {
+    const onKeydown = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      if (e.key === 'j' || e.key === 'ArrowDown') {
+        e.preventDefault()
+        setSel((s) => Math.min(s + 1, flat.length - 1))
+      } else if (e.key === 'k' || e.key === 'ArrowUp') {
+        e.preventDefault()
+        setSel((s) => Math.max(s - 1, 0))
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        onPlay(flat[sel])
+      }
+    }
+    window.addEventListener('keydown', onKeydown)
+    return () => window.removeEventListener('keydown', onKeydown)
+  }, [flat, sel, onPlay])
+
+  useEffect(() => {
+    document.getElementById(`level-${flat[sel]?.id}`)?.scrollIntoView({ block: 'nearest' })
+  }, [sel, flat])
+
   return (
     <div className="space-y-6">
       {STAGES.map((stage) => {
@@ -33,11 +59,18 @@ export default function LevelSelect({ save, onPlay }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                 {list.map((c) => {
                   const prog = save.progress[c.id]
+                  const selected = flat[sel]?.id === c.id
                   return (
                     <button
                       key={c.id}
+                      id={`level-${c.id}`}
                       onClick={() => onPlay(c)}
-                      className="text-left rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2.5 hover:border-emerald-600 hover:bg-zinc-900 transition-colors"
+                      onMouseEnter={() => setSel(flat.indexOf(c))}
+                      className={`text-left rounded-lg border px-3 py-2.5 transition-colors ${
+                        selected
+                          ? 'border-emerald-500 bg-zinc-900 ring-1 ring-emerald-500/50'
+                          : 'border-zinc-800 bg-zinc-900/60 hover:border-emerald-600 hover:bg-zinc-900'
+                      }`}
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-semibold">
@@ -60,6 +93,7 @@ export default function LevelSelect({ save, onPlay }: Props) {
           </section>
         )
       })}
+      <p className="text-xs font-mono text-zinc-600 pb-4">j/k navigate · ⏎ play</p>
     </div>
   )
 }

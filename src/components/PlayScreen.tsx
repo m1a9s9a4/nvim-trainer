@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Challenge, WinStats } from '../types'
 import VimEditor from '../editor/VimEditor'
+import { exActions } from '../engine/exBus'
 import HintPanel from './HintPanel'
 import ResultModal from './ResultModal'
 
@@ -51,6 +52,23 @@ export default function PlayScreen({
     const { stars, xpGained } = onCleared(challenge, stats)
     setResult({ stats, stars, xpGained })
   }
+
+  // wire vim ex commands (:h :r :n :q) to UI actions; refresh every render to avoid stale closures
+  useEffect(() => {
+    exActions.current = {
+      toggleHints: onToggleHints,
+      reset,
+      next: () => {
+        if (hasNext) onNext()
+      },
+      quit: onBack,
+    }
+  })
+  useEffect(() => {
+    return () => {
+      exActions.current = null
+    }
+  }, [])
 
   return (
     <div className="space-y-4">
@@ -110,6 +128,10 @@ export default function PlayScreen({
       <div className="min-h-8 rounded-lg bg-zinc-900/60 border border-zinc-800 px-3 py-1.5 font-mono text-sm text-zinc-300 break-all">
         {keys.length > 0 ? keys.join(' ') : <span className="text-zinc-600">your keystrokes appear here…</span>}
       </div>
+
+      <p className="text-xs font-mono text-zinc-600">
+        :h hints · :r reset · :n skip · :q levels <span className="text-zinc-700">(command-line keys don't count)</span>
+      </p>
 
       {result && (
         <ResultModal

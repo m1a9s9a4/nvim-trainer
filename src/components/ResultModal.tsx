@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import type { Challenge, WinStats } from '../types'
 
 interface Props {
@@ -11,6 +12,22 @@ interface Props {
 }
 
 export default function ResultModal({ challenge, stats, stars, xpGained, hasNext, onRetry, onNext }: Props) {
+  useEffect(() => {
+    const onKeydown = (e: KeyboardEvent) => {
+      if (e.key === 'r') {
+        e.preventDefault()
+        e.stopPropagation()
+        onRetry()
+      } else if ((e.key === 'n' || e.key === 'Enter') && hasNext) {
+        e.preventDefault()
+        e.stopPropagation()
+        onNext()
+      }
+    }
+    window.addEventListener('keydown', onKeydown, true)
+    return () => window.removeEventListener('keydown', onKeydown, true)
+  }, [hasNext, onRetry, onNext])
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
       <div className="w-full max-w-md rounded-xl border border-zinc-700 bg-zinc-900 p-6 space-y-4 shadow-2xl">
@@ -51,19 +68,20 @@ export default function ResultModal({ challenge, stats, stars, xpGained, hasNext
           </p>
         </div>
 
-        <div className="flex gap-2 justify-end pt-1">
+        <div className="flex gap-2 justify-end items-center pt-1">
+          <span className="mr-auto text-xs font-mono text-zinc-600">r retry{hasNext ? ' · n next' : ''}</span>
           <button
             onClick={onRetry}
             className="px-4 py-2 rounded-lg border border-zinc-700 text-sm hover:bg-zinc-800"
           >
-            Retry
+            Retry <kbd className="text-zinc-500">r</kbd>
           </button>
           {hasNext && (
             <button
               onClick={onNext}
               className="px-4 py-2 rounded-lg bg-emerald-600 text-sm font-semibold hover:bg-emerald-500"
             >
-              Next →
+              Next <kbd className="opacity-60">n</kbd>
             </button>
           )}
         </div>

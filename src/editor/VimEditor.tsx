@@ -6,6 +6,7 @@ import { vim, getCM } from '@replit/codemirror-vim'
 import { oneDark } from '@codemirror/theme-one-dark'
 import type { Challenge, WinStats } from '../types'
 import { normalizeKey } from '../engine/keys'
+import { registerExCommands } from '../engine/exBus'
 import { worldDecorations } from './worldDeco'
 
 interface Props {
@@ -29,7 +30,10 @@ export default function VimEditor({ challenge, attempt, onKey, onWin, onMode }: 
     const container = containerRef.current
     if (!container) return
 
+    registerExCommands()
+
     let won = false
+    let currentMode = 'normal'
     const keystrokes: string[] = []
     let startedAt = 0
 
@@ -81,8 +85,12 @@ export default function VimEditor({ challenge, attempt, onKey, onWin, onMode }: 
 
     const onKeydown = (e: KeyboardEvent) => {
       if (won) return
+      // keys typed into the vim command line (after : or /) are meta, not golf strokes
+      const target = e.target as HTMLElement | null
+      if (target?.closest('.cm-panels, .cm-vim-panel, .cm-dialog')) return
       const token = normalizeKey(e)
       if (!token) return
+      if (token === ':' && currentMode === 'normal') return
       if (keystrokes.length === 0) startedAt = performance.now()
       keystrokes.push(token)
       onKeyRef.current(token)
@@ -91,6 +99,7 @@ export default function VimEditor({ challenge, attempt, onKey, onWin, onMode }: 
 
     const cm = getCM(view)
     cm?.on('vim-mode-change', (ev: { mode: string }) => {
+      currentMode = ev.mode
       onModeRef.current?.(ev.mode)
     })
 
