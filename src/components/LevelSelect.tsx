@@ -105,9 +105,11 @@ export default function LevelSelect({ save, daily, dailyDone, onPlay, onPlayRush
       </section>
 
       <section>
-        <div className="flex items-baseline gap-3 mb-2">
-          <h2 className="text-sm font-bold text-rose-300">⚡ Rush Mode</h2>
-          <span className="text-xs text-zinc-600">beat the clock — current task + next, nothing more</span>
+        <div className="flex items-baseline gap-3 mb-2 font-mono">
+          <h2 className="text-sm font-bold text-rose-300">
+            <span className="text-zinc-600">:</span>rush ⚡
+          </h2>
+          <span className="text-xs text-zinc-600">" beat the clock — current task + next, nothing more</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {RUSHES.map((rush) => {
@@ -119,7 +121,7 @@ export default function LevelSelect({ save, daily, dailyDone, onPlay, onPlayRush
                 id={`level-${rush.id}`}
                 onClick={() => onPlayRush(rush)}
                 onMouseEnter={() => setSel(flat.findIndex((i) => itemId(i) === rush.id))}
-                className={`text-left rounded-lg border px-3 py-2.5 transition-colors ${
+                className={`level-card text-left rounded-lg border px-3 py-2.5 ${
                   selected
                     ? 'border-rose-500 bg-zinc-900 ring-1 ring-rose-500/50'
                     : 'border-zinc-800 bg-zinc-900/60 hover:border-rose-600 hover:bg-zinc-900'
@@ -142,9 +144,11 @@ export default function LevelSelect({ save, daily, dailyDone, onPlay, onPlayRush
         </div>
       </section>
       <section>
-        <div className="flex items-baseline gap-3 mb-2">
-          <h2 className="text-sm font-bold text-violet-300">💼 Code Dojo</h2>
-          <span className="text-xs text-zinc-600">real-world edits on real code — Go & TypeScript</span>
+        <div className="flex items-baseline gap-3 mb-2 font-mono">
+          <h2 className="text-sm font-bold text-violet-300">
+            <span className="text-zinc-600">:</span>dojo 💼
+          </h2>
+          <span className="text-xs text-zinc-600">" real-world edits on real code — Go & TypeScript</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {CODE_DOJO.map((c) => {
@@ -156,7 +160,7 @@ export default function LevelSelect({ save, daily, dailyDone, onPlay, onPlayRush
                 id={`level-${c.id}`}
                 onClick={() => onPlay(c)}
                 onMouseEnter={() => setSel(flat.findIndex((i) => itemId(i) === c.id))}
-                className={`text-left rounded-lg border px-3 py-2.5 transition-colors ${
+                className={`level-card text-left rounded-lg border px-3 py-2.5 ${
                   selected
                     ? 'border-violet-500 bg-zinc-900 ring-1 ring-violet-500/50'
                     : 'border-zinc-800 bg-zinc-900/60 hover:border-violet-600 hover:bg-zinc-900'
@@ -210,7 +214,7 @@ export default function LevelSelect({ save, daily, dailyDone, onPlay, onPlayRush
                       id={`level-${c.id}`}
                       onClick={() => onPlay(c)}
                       onMouseEnter={() => setSel(flat.findIndex((i) => itemId(i) === c.id))}
-                      className={`text-left rounded-lg border px-3 py-2.5 transition-colors ${
+                      className={`level-card text-left rounded-lg border px-3 py-2.5 ${
                         selected
                           ? 'border-emerald-500 bg-zinc-900 ring-1 ring-emerald-500/50'
                           : 'border-zinc-800 bg-zinc-900/60 hover:border-emerald-600 hover:bg-zinc-900'

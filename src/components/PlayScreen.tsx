@@ -22,10 +22,12 @@ interface Props {
   onCleared: (challenge: Challenge, stats: WinStats) => { stars: number; xpGained: number; share?: string }
 }
 
+// lualine-style mode segment colors (Tokyo Night)
 const MODE_STYLE: Record<string, string> = {
-  normal: 'bg-emerald-900/60 text-emerald-300 border-emerald-700',
-  insert: 'bg-sky-900/60 text-sky-300 border-sky-700',
-  visual: 'bg-purple-900/60 text-purple-300 border-purple-700',
+  normal: 'bg-tn-blue text-tn-bg',
+  insert: 'bg-tn-green text-tn-bg',
+  visual: 'bg-tn-purple text-tn-bg',
+  replace: 'bg-tn-red text-tn-bg',
 }
 
 export default function PlayScreen({
@@ -113,16 +115,6 @@ export default function PlayScreen({
         {challenge.mission}
       </p>
 
-      <div className="flex items-center gap-4 text-xs font-mono">
-        <span className={`px-2 py-0.5 rounded border uppercase ${MODE_STYLE[mode] ?? MODE_STYLE.normal}`}>
-          {mode}
-        </span>
-        <span className="text-zinc-400">
-          keys <span className={keys.length > challenge.par ? 'text-rose-400' : 'text-zinc-100'}>{keys.length}</span>
-          <span className="text-zinc-600"> / par {challenge.par}</span>
-        </span>
-      </div>
-
       <div className="flex gap-4 items-start">
         <div className="flex-1 min-w-0 rounded-lg overflow-hidden border border-zinc-800">
           {challenge.filename && (
@@ -142,6 +134,22 @@ export default function PlayScreen({
             onWin={handleWin}
             onMode={setMode}
           />
+          {/* lualine-style statusline */}
+          <div className="flex items-stretch font-mono text-xs border-t border-zinc-800 bg-zinc-950 select-none">
+            <span className={`px-3 py-1 font-bold uppercase ${MODE_STYLE[mode] ?? MODE_STYLE.normal}`}>
+              {mode}
+            </span>
+            <span className="px-3 py-1 text-zinc-500 border-r border-zinc-800">
+              {challenge.filename ?? `${challenge.type === 'world' ? 'world' : 'buffer'}.txt`}
+            </span>
+            <span className="ml-auto px-3 py-1 text-zinc-500 border-l border-zinc-800">
+              ⌨ <span className={keys.length > challenge.par ? 'text-rose-400' : 'text-zinc-300'}>{keys.length}</span>
+              <span className="text-zinc-600">/{challenge.par}</span>
+            </span>
+            <span className={`px-3 py-1 font-bold ${MODE_STYLE[mode] ?? MODE_STYLE.normal}`}>
+              {challenge.track === 'code' ? 'dojo' : challenge.type === 'world' ? 'world' : `stage ${challenge.stage}`}
+            </span>
+          </div>
         </div>
         {hintsOn && <HintPanel challenge={challenge} />}
       </div>

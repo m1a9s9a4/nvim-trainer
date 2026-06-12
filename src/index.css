@@ -1,19 +1,116 @@
 @import "tailwindcss";
 
+/*
+ * Tokyo Night skin.
+ * The zinc/emerald/etc shades used across components are remapped to the
+ * Tokyo Night palette here, so the whole app wears the most-installed
+ * neovim colorscheme without touching component markup.
+ */
+@theme {
+  --color-tn-bg: #1a1b26;
+  --color-tn-bg0: #16161e;
+  --color-tn-panel: #1f2335;
+  --color-tn-border: #292e42;
+  --color-tn-fg: #c0caf5;
+  --color-tn-blue: #7aa2f7;
+  --color-tn-cyan: #7dcfff;
+  --color-tn-green: #9ece6a;
+  --color-tn-yellow: #e0af68;
+  --color-tn-orange: #ff9e64;
+  --color-tn-red: #f7768e;
+  --color-tn-purple: #bb9af7;
+
+  --color-zinc-950: #16161e;
+  --color-zinc-900: #1f2335;
+  --color-zinc-800: #292e42;
+  --color-zinc-700: #3b4261;
+  --color-zinc-600: #414868;
+  --color-zinc-500: #565f89;
+  --color-zinc-400: #a9b1d6;
+  --color-zinc-300: #c0caf5;
+  --color-zinc-200: #c0caf5;
+  --color-zinc-100: #c0caf5;
+
+  --color-emerald-300: #b9e89a;
+  --color-emerald-400: #9ece6a;
+  --color-emerald-500: #73a64f;
+  --color-emerald-600: #587f3f;
+  --color-emerald-950: #1c2718;
+
+  --color-amber-300: #e0af68;
+  --color-amber-400: #e0af68;
+  --color-amber-500: #ff9e64;
+  --color-amber-900: #5c4a2d;
+  --color-amber-950: #2a2113;
+
+  --color-rose-300: #f7768e;
+  --color-rose-400: #f7768e;
+  --color-rose-500: #f7768e;
+  --color-rose-600: #c75c72;
+  --color-rose-900: #6b2a3a;
+  --color-rose-950: #2d1620;
+
+  --color-sky-200: #b4f9f8;
+  --color-sky-300: #7dcfff;
+  --color-sky-500: #7dcfff;
+  --color-sky-600: #5ba8d6;
+  --color-sky-700: #2a5d7a;
+  --color-sky-900: #1f3a52;
+  --color-sky-950: #14202e;
+
+  --color-violet-300: #bb9af7;
+  --color-violet-500: #bb9af7;
+  --color-violet-600: #9d7cd8;
+
+  --color-purple-300: #bb9af7;
+  --color-purple-700: #6b5499;
+  --color-purple-900: #3a2f55;
+}
+
 :root {
   color-scheme: dark;
 }
 
 body {
-  background-color: #09090b;
-  color: #f4f4f5;
+  background-color: #1a1b26;
+  color: #c0caf5;
+  font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* very subtle CRT scanlines over everything */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.12) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.25;
+}
+
+/* blinking block cursor for the title */
+.cursor-blink {
+  animation: cursorBlink 1.2s steps(1) infinite;
+}
+
+@keyframes cursorBlink {
+  50% { opacity: 0; }
+}
+
+.prompt-glow {
+  text-shadow: 0 0 8px rgba(158, 206, 106, 0.7);
 }
 
 /* ---------- editor ---------- */
 
 .cm-editor {
   font-size: 16px;
-  border-radius: 0.5rem;
 }
 
 .cm-editor.cm-focused {
@@ -25,11 +122,30 @@ body {
   padding: 12px 0;
 }
 
+.golf .cm-editor,
+.golf .cm-gutters {
+  background: #16161e !important;
+}
+
+.golf .cm-gutters {
+  border-right: 1px solid #292e42 !important;
+  color: #3b4261 !important;
+}
+
+.golf .cm-activeLine {
+  background: rgba(41, 46, 66, 0.4) !important;
+}
+
+.golf .cm-activeLineGutter {
+  background: transparent !important;
+  color: #737aa2 !important;
+}
+
 /* ---------- world levels ---------- */
 
 .world .cm-editor {
   font-size: 24px;
-  background: radial-gradient(1200px 400px at 50% -10%, #11271a 0%, #0a120d 60%, #070b08 100%) !important;
+  background: radial-gradient(1200px 400px at 50% -10%, #1c2a22 0%, #161e1a 60%, #13171a 100%) !important;
 }
 
 .world .cm-activeLine {
@@ -37,8 +153,8 @@ body {
 }
 
 .world .cm-fat-cursor {
-  background: rgba(250, 204, 21, 0.45) !important;
-  outline: 1px solid rgba(250, 204, 21, 0.8) !important;
+  background: rgba(224, 175, 104, 0.45) !important;
+  outline: 1px solid rgba(224, 175, 104, 0.8) !important;
   border-radius: 3px;
 }
 
@@ -76,13 +192,13 @@ body {
 .tile-goblin::after { content: "👹"; }
 
 .tile-goal {
-  background: rgba(250, 204, 21, 0.22);
+  background: rgba(224, 175, 104, 0.22);
   border-radius: 3px;
   animation: goalPulse 1.4s ease-in-out infinite;
 }
 
 @keyframes goalPulse {
-  50% { background: rgba(250, 204, 21, 0.45); }
+  50% { background: rgba(224, 175, 104, 0.5); }
 }
 
 /* ---------- game fx ---------- */
@@ -105,7 +221,16 @@ body {
 }
 
 @keyframes clearGlow {
-  0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
-  30% { box-shadow: 0 0 36px 6px rgba(250, 204, 21, 0.55); }
-  100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(224, 175, 104, 0); }
+  30% { box-shadow: 0 0 36px 6px rgba(224, 175, 104, 0.55); }
+  100% { box-shadow: 0 0 0 0 rgba(224, 175, 104, 0); }
+}
+
+/* card hover lift */
+.level-card {
+  transition: transform 0.1s ease-out, border-color 0.15s, background-color 0.15s;
+}
+
+.level-card:hover {
+  transform: translateY(-1px);
 }

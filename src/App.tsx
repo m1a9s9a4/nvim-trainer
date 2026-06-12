@@ -85,12 +85,24 @@ export default function App() {
   return (
     <div className="min-h-screen max-w-5xl mx-auto px-4 py-6">
       <header className="flex items-center justify-between mb-6">
-        <h1 className="text-lg font-bold tracking-tight">
-          ⌨️ nvim trainer <span className="text-zinc-500 text-xs font-normal">alpha</span>
+        <h1 className="text-base font-bold tracking-tight font-mono">
+          <span className="text-tn-green prompt-glow">❯</span> nvim-trainer
+          <span className="cursor-blink text-tn-blue">▊</span>
+          <span className="text-zinc-600 text-xs font-normal ml-3">-- ALPHA --</span>
         </h1>
-        <div className="flex items-center gap-4 text-sm text-zinc-300">
-          <span title="experience points">⚡ {save.xp} XP</span>
-          <span title="daily streak">🔥 {save.streak.count}</span>
+        <div className="flex items-center font-mono text-xs">
+          <span
+            title="experience points"
+            className="px-2.5 py-1 rounded-l border border-zinc-800 bg-zinc-950 text-tn-yellow"
+          >
+            ⚡ {save.xp}xp
+          </span>
+          <span
+            title="daily streak"
+            className="px-2.5 py-1 rounded-r border border-l-0 border-zinc-800 bg-zinc-950 text-tn-orange"
+          >
+            🔥 {save.streak.count}d
+          </span>
         </div>
       </header>
 
