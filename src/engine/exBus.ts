@@ -2,6 +2,7 @@ import { Vim } from '@replit/codemirror-vim'
 
 export interface ExActions {
   toggleHints(): void
+  toggleAnswer(): void
   reset(): void
   next(): void
   quit(): void
@@ -15,6 +16,7 @@ export function registerExCommands() {
   if (registered) return
   registered = true
   Vim.defineEx('hints', 'h', () => exActions.current?.toggleHints())
+  Vim.defineEx('answer', 'a', () => exActions.current?.toggleAnswer())
   Vim.defineEx('reset', 'r', () => exActions.current?.reset())
   Vim.defineEx('next', 'n', () => exActions.current?.next())
   Vim.defineEx('quit', 'q', () => exActions.current?.quit())

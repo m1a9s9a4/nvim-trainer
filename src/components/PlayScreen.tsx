@@ -43,6 +43,7 @@ export default function PlayScreen({
   const [mode, setMode] = useState('normal')
   const [attempt, setAttempt] = useState(0)
   const [result, setResult] = useState<Result | null>(null)
+  const [answerOn, setAnswerOn] = useState(false)
 
   const reset = () => {
     setKeys([])
@@ -60,6 +61,7 @@ export default function PlayScreen({
   useEffect(() => {
     exActions.current = {
       toggleHints: onToggleHints,
+      toggleAnswer: () => setAnswerOn((a) => !a),
       reset,
       next: () => {
         if (hasNext) onNext()
@@ -93,6 +95,14 @@ export default function PlayScreen({
             💡 hints {hintsOn ? 'on' : 'off'}
           </button>
           <button
+            onClick={() => setAnswerOn((a) => !a)}
+            className={`text-xs px-2.5 py-1 rounded-full border ${
+              answerOn ? 'border-emerald-500 text-emerald-300' : 'border-zinc-700 text-zinc-500'
+            }`}
+          >
+            ✅ answer {answerOn ? 'on' : 'off'}
+          </button>
+          <button
             onClick={reset}
             className="text-xs px-2.5 py-1 rounded-full border border-zinc-700 text-zinc-400 hover:text-zinc-100"
           >
@@ -114,6 +124,26 @@ export default function PlayScreen({
         {challenge.type === 'world' ? '📜 ' : ''}
         {challenge.mission}
       </p>
+
+      {answerOn && (
+        <div className="rounded-lg border border-emerald-950 bg-emerald-950/30 px-3 py-2">
+          <p className="text-[10px] uppercase tracking-widest text-emerald-400 font-semibold mb-1.5">
+            Answer — {challenge.solution.length} keys
+          </p>
+          {challenge.solutionSteps ? (
+            <div className="space-y-1">
+              {challenge.solutionSteps.map((step, i) => (
+                <div key={i} className="flex items-baseline gap-3">
+                  <code className="font-mono text-sm text-emerald-300 whitespace-nowrap min-w-16">{step.keys}</code>
+                  <span className="text-xs text-zinc-400">{step.explain}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="font-mono text-sm text-emerald-300">{challenge.solution.join(' ')}</p>
+          )}
+        </div>
+      )}
 
       <div className="flex gap-4 items-start">
         <div className="flex-1 min-w-0 rounded-lg overflow-hidden border border-zinc-800">
@@ -159,7 +189,8 @@ export default function PlayScreen({
       </div>
 
       <p className="text-xs font-mono text-zinc-600">
-        :h hints · :r reset · :n skip · :q levels <span className="text-zinc-700">(command-line keys don't count)</span>
+        :h hints · :a answer · :r reset · :n skip · :q levels{' '}
+        <span className="text-zinc-700">(command-line keys don't count)</span>
       </p>
 
       {result && (

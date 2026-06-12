@@ -49,6 +49,7 @@ export default function RushScreen({ rush, best, onFinish, onBack }: Props) {
   useEffect(() => {
     exActions.current = {
       toggleHints: () => {},
+      toggleAnswer: () => {},
       reset: restart,
       next: () => {},
       quit: onBack,
